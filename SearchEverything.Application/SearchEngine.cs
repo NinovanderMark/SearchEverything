@@ -4,7 +4,8 @@
     {
         public async Task<SearchResult> Find(string text, string basePath, bool inFiles = false)
         {
-           return await GetResultsFromDirectory(text, basePath, inFiles);
+            string sanitizedText = text.Replace("*", "");
+            return await GetResultsFromDirectory(sanitizedText, basePath, inFiles);
         }
 
         private async Task<SearchResult> GetResultsFromDirectory(string text, string path, bool inFiles)

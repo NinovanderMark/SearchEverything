@@ -43,6 +43,8 @@
             col_Filename = new DataGridViewTextBoxColumn();
             col_Path = new DataGridViewTextBoxColumn();
             col_LineNumber = new DataGridViewTextBoxColumn();
+            statusStrip1 = new StatusStrip();
+            lbl_Status = new ToolStripStatusLabel();
             panel1.SuspendLayout();
             panel6.SuspendLayout();
             panel5.SuspendLayout();
@@ -50,6 +52,7 @@
             panel4.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)data_ResultDisplay).BeginInit();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -156,6 +159,7 @@
             // panel2
             // 
             panel2.Controls.Add(data_ResultDisplay);
+            panel2.Controls.Add(statusStrip1);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 54);
             panel2.Name = "panel2";
@@ -173,7 +177,7 @@
             data_ResultDisplay.Name = "data_ResultDisplay";
             data_ResultDisplay.ReadOnly = true;
             data_ResultDisplay.RowTemplate.Height = 25;
-            data_ResultDisplay.Size = new Size(904, 540);
+            data_ResultDisplay.Size = new Size(904, 518);
             data_ResultDisplay.TabIndex = 0;
             // 
             // col_Filename
@@ -199,6 +203,21 @@
             col_LineNumber.Name = "col_LineNumber";
             col_LineNumber.ReadOnly = true;
             // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lbl_Status });
+            statusStrip1.Location = new Point(0, 518);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(904, 22);
+            statusStrip1.TabIndex = 1;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // lbl_Status
+            // 
+            lbl_Status.Name = "lbl_Status";
+            lbl_Status.Size = new Size(39, 17);
+            lbl_Status.Text = "Ready";
+            // 
             // MainForm
             // 
             AcceptButton = btn_Search;
@@ -219,7 +238,10 @@
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)data_ResultDisplay).EndInit();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -240,5 +262,7 @@
         private Panel panel5;
         private TextBox txt_SearchPath;
         private Label label1;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel lbl_Status;
     }
 }
