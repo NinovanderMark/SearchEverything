@@ -34,6 +34,7 @@
             txt_SearchString = new TextBox();
             panel5 = new Panel();
             txt_SearchPath = new TextBox();
+            btn_BrowserDirectory = new Button();
             label1 = new Label();
             panel3 = new Panel();
             panel4 = new Panel();
@@ -88,11 +89,12 @@
             // panel5
             // 
             panel5.Controls.Add(txt_SearchPath);
+            panel5.Controls.Add(btn_BrowserDirectory);
             panel5.Controls.Add(label1);
             panel5.Dock = DockStyle.Bottom;
-            panel5.Location = new Point(0, 27);
+            panel5.Location = new Point(0, 29);
             panel5.Name = "panel5";
-            panel5.Size = new Size(704, 27);
+            panel5.Size = new Size(704, 25);
             panel5.TabIndex = 2;
             // 
             // txt_SearchPath
@@ -101,9 +103,20 @@
             txt_SearchPath.Location = new Point(105, 0);
             txt_SearchPath.Margin = new Padding(6, 3, 3, 3);
             txt_SearchPath.Name = "txt_SearchPath";
-            txt_SearchPath.Size = new Size(599, 23);
+            txt_SearchPath.Size = new Size(575, 23);
             txt_SearchPath.TabIndex = 1;
             txt_SearchPath.Text = "C:\\";
+            // 
+            // btn_BrowserDirectory
+            // 
+            btn_BrowserDirectory.Dock = DockStyle.Right;
+            btn_BrowserDirectory.Location = new Point(680, 0);
+            btn_BrowserDirectory.Name = "btn_BrowserDirectory";
+            btn_BrowserDirectory.Size = new Size(24, 25);
+            btn_BrowserDirectory.TabIndex = 2;
+            btn_BrowserDirectory.Text = "...";
+            btn_BrowserDirectory.UseVisualStyleBackColor = true;
+            btn_BrowserDirectory.Click += btn_BrowserDirectory_Click;
             // 
             // label1
             // 
@@ -111,7 +124,7 @@
             label1.Location = new Point(0, 0);
             label1.Margin = new Padding(3, 0, 6, 0);
             label1.Name = "label1";
-            label1.Size = new Size(105, 27);
+            label1.Size = new Size(105, 25);
             label1.TabIndex = 0;
             label1.Text = "Search in directory";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -266,5 +279,6 @@
         private Label label1;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel lbl_Status;
+        private Button btn_BrowserDirectory;
     }
 }
