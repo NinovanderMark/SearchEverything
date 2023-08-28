@@ -15,7 +15,7 @@ namespace SearchEverything.CLI
             string searchPath = Environment.CurrentDirectory;
             bool searchInFile = false;
             if (args.Length > 1)
-                searchPath = args[1];
+                searchPath = Path.GetFullPath(args[1]);
 
             if ( args.Length > 2)
                 bool.TryParse(args[2], out searchInFile);
