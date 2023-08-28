@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SearchEverything.ApplicationCore;
+using System;
+using System.Reflection;
 
 namespace SearchEverything.CLI
 {
@@ -10,6 +12,8 @@ namespace SearchEverything.CLI
     {
         static async Task<int> Main(string[] args)
         {
+            Console.WriteLine($"SearchEverything - v{Assembly.GetExecutingAssembly().GetName().Version}");
+
             IConfiguration configuration = new ConfigurationBuilder()
               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
               .AddEnvironmentVariables()

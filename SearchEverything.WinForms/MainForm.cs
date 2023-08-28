@@ -1,4 +1,5 @@
 using SearchEverything.ApplicationCore;
+using System.Reflection;
 
 namespace SearchEverything.WinForms
 {
@@ -9,6 +10,7 @@ namespace SearchEverything.WinForms
         public MainForm()
         {
             InitializeComponent();
+            Text += " - v" + Assembly.GetExecutingAssembly().GetName().Version;
             _searchEngine = new SearchEngine();
         }
 

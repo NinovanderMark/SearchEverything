@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<ApplicationIcon>SearchEverything.ico</ApplicationIcon>
+	<Version>0.2.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

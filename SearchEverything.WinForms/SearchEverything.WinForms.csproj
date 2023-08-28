@@ -7,6 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>SearchEverything.ico</ApplicationIcon>
+	<Version>0.2.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using SearchEverything.CLI.Models;
+﻿using Microsoft.Extensions.Logging;
+using SearchEverything.CLI.Models;
 
 namespace SearchEverything.CLI
 {
