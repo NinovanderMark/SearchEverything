@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SearchEverything.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "dll"
+    }
+  }
+}

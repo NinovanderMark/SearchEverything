@@ -1,4 +1,8 @@
-﻿using SearchEverything.ApplicationCore;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using SearchEverything.ApplicationCore;
 
 namespace SearchEverything.CLI
 {
@@ -6,14 +10,41 @@ namespace SearchEverything.CLI
     {
         static async Task<int> Main(string[] args)
         {
-            var searchEngine = new SearchEngine();
-            var result = await searchEngine.Find(args[0], args[1]);
-            foreach(var row in result.Rows)
-            {
-                Console.WriteLine($"{row.Filename}:{row.LineNumber} - {row.Path}");
-            }
+            IConfiguration configuration = new ConfigurationBuilder()
+              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+              .AddEnvironmentVariables()
+              .Build();
 
-            return 0;
+            bool.TryParse(configuration["verbose"], out bool verbose);
+            var serviceProvider = ConfigureServices(configuration);
+
+            try
+            {
+                var arguments = serviceProvider.GetRequiredService<ArgumentParser>().Parse(args);
+                return await serviceProvider.GetRequiredService<ConsoleApplication>().Run(arguments);
+            }
+            catch (Exception ex)
+            {
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                if ( verbose) 
+                    Console.WriteLine(ex.ToString());
+                else
+                    Console.WriteLine(ex.Message);
+
+                Console.ForegroundColor = color;
+                return -1;
+            }
         }
+
+        private static ServiceProvider ConfigureServices(IConfiguration configuration)
+            => new ServiceCollection()
+                .AddSingleton(configuration)
+                .AddTransient<ArgumentParser>()
+                .AddTransient<ConsoleApplication>()
+                .AddTransient<SearchEngine>()
+                .AddLogging(configure => configure.AddConsole())
+                .BuildServiceProvider();
     }
 }
