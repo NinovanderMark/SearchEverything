@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>SearchEverything.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="SearchEverything.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SearchEverything.Application\SearchEverything.ApplicationCore.csproj" />
