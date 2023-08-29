@@ -22,7 +22,7 @@ namespace SearchEverything.CLI
             var result = await _searchEngine.Find(arguments.Text, arguments.Path, arguments.InFile);
             foreach (var row in result.Rows)
             {
-               Console.WriteLine($"\t{row.Filename}:{row.LineNumber}\t{row.Path}");
+               Console.WriteLine($"  {row.Path}{(row.LineNumber >= 0 ? $":{row.LineNumber}" : string.Empty )}");
             }
 
             return 0;
