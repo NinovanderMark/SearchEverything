@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SearchEverything.CLI.Models;
+using SearchEverything.ApplicationCore;
 
 namespace SearchEverything.CLI
 {
@@ -9,23 +9,19 @@ namespace SearchEverything.CLI
 
         public SearchArguments Parse(string[] args)
         {
-            if (args.Length < 1)
-                throw new ArgumentException("Unable to parse argument(s), did you provide any?");
+            if (args.Length < 2)
+                throw new ArgumentException("Insufficient arguments, needs at least path and content search arguments");
 
-            string searchText = args[0];
-            string searchPath = Environment.CurrentDirectory;
-            bool searchInFile = false;
-            if (args.Length > 1)
-                searchPath = Path.GetFullPath(args[1]);
+            string pathMatch = args[0];
+            string contentMatch = args[1];
+            string basePath = Environment.CurrentDirectory;
+            if (args.Length > 2)
+                basePath = Path.GetFullPath(args[2]);
 
-            if ( args.Length > 2)
-                bool.TryParse(args[2], out searchInFile);
-
-            return new SearchArguments
+            return new SearchArguments(basePath)
             {
-                Text = searchText,
-                Path = searchPath,
-                InFile = searchInFile
+                PathSearch = pathMatch,
+                ContentSearch = contentMatch,
             };
         }
     }

@@ -1,44 +1,79 @@
-﻿namespace SearchEverything.ApplicationCore
+﻿using static System.Net.Mime.MediaTypeNames;
+
+namespace SearchEverything.ApplicationCore
 {
     public class SearchEngine
     {
-        public async Task<SearchResult> Find(string text, string basePath, bool inFiles = false)
+        private List<Action<string>> _searchPathListeners { get; set; } = new List<Action<string>>();
+
+        /// <summary>
+        /// Add a function that is called each time a new path is searched
+        /// </summary>
+        /// <param name="listener"></param>
+        public void AddSearchPathListener(Action<string> listener)
         {
-            string sanitizedText = text.Replace("*", "");
-            return await GetResultsFromDirectory(sanitizedText, basePath, inFiles);
+            _searchPathListeners.Add(listener);
         }
 
-        private async Task<SearchResult> GetResultsFromDirectory(string text, string path, bool inFiles)
+        /// <summary>
+        /// Search for files matching either a certain path, based on the contents of the file, or both
+        /// </summary>
+
+        public async Task<SearchResult> Find(SearchArguments arguments)
+        {
+            string? sanitizedPath = arguments.PathSearch == null ? null : arguments.PathSearch.Replace("*", "");
+            return await GetResultsFromDirectory(new SearchArguments(arguments.BasePath)
+            {
+                PathSearch = sanitizedPath,
+                ContentSearch = arguments.ContentSearch,
+            });
+        }
+
+        private async Task<SearchResult> GetResultsFromDirectory(SearchArguments arguments)
         {
             var result = new SearchResult();
-            var directories = GetDirectories(path);
-            foreach(var d in directories)
+            var directories = GetDirectories(arguments.BasePath);
+            foreach(var dir in directories)
             {
-                if ( d.Contains(text))
+                if (string.IsNullOrEmpty(dir))
+                    continue;
+                
+                SearchingPath(dir);
+                if ( string.IsNullOrEmpty(arguments.PathSearch) || dir.Contains(arguments.PathSearch))
                 {
                     result.Rows.Add(new SearchResultRow
                     {
                         Filename = "",
                         LineNumber = -1,
-                        Path = d
+                        Path = dir
                     });
                 }
 
-                var intermediate = await GetResultsFromDirectory(text, d, inFiles);
+                var intermediate = await GetResultsFromDirectory(new SearchArguments(dir)
+                {
+                    ContentSearch = arguments.ContentSearch,
+                    PathSearch = arguments.PathSearch,
+                });
+
                 result.Rows.AddRange(intermediate.Rows);
             }
 
-            var files = GetFiles(path);
+            var files = GetFiles(arguments.BasePath);
             foreach (var file in files) 
             {
-                if ( inFiles )
+                if (string.IsNullOrEmpty(file))
+                    continue;
+
+                SearchingPath(file);
+                
+                if ( arguments.PathSearch == null || file.Contains(arguments.PathSearch))
                 {
-                    var intermediate = await GetResultsFromFile(text, file);
-                    result.Rows.AddRange(intermediate.Rows);
-                }
-                else
-                {
-                    if ( file.Contains(text))
+                    if ( !string.IsNullOrEmpty(arguments.ContentSearch))
+                    {
+                        var intermediate = await GetResultsFromFile(arguments.ContentSearch, file);
+                        result.Rows.AddRange(intermediate.Rows);
+                    }
+                    else
                     {
                         result.Rows.Add(new SearchResultRow
                         {
@@ -51,6 +86,14 @@
             }
 
             return result;
+        }
+
+        private void SearchingPath(string path)
+        {
+            foreach(var listener in _searchPathListeners)
+            {
+                listener.Invoke(path);
+            }
         }
 
         private string[] GetDirectories(string path)
@@ -83,24 +126,31 @@
         {
             string fileName = Path.GetFileName(file);
             var result = new SearchResult();
-            using (StreamReader sr = new StreamReader(file))
+            try
             {
-                long lineNumber = 0;
-                while (!sr.EndOfStream)
+                using (StreamReader sr = new StreamReader(file))
                 {
-                    string? line = await sr.ReadLineAsync();
-                    if ( line != null && line.Contains(text))
+                    long lineNumber = 0;
+                    while (!sr.EndOfStream)
                     {
-                        result.Rows.Add(new SearchResultRow
+                        string? line = await sr.ReadLineAsync();
+                        if (line != null && line.Contains(text))
                         {
-                            Filename = fileName,
-                            LineNumber = lineNumber,
-                            Path = file
-                        });
-                    }
+                            result.Rows.Add(new SearchResultRow
+                            {
+                                Filename = fileName,
+                                LineNumber = lineNumber,
+                                Path = file
+                            });
+                        }
 
-                    lineNumber++;
+                        lineNumber++;
+                    }
                 }
+            }
+            catch(IOException exception)
+            {
+                result.Errors.Add(new SearchError(file, exception));
             }
 
             return result;
