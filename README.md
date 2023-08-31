@@ -10,12 +10,10 @@ SearchEverything comes with Windows binaries, which only depend on the .NET 6 [r
 Simply run the CLI providing a path to match, followed by the content to match and optionally the starting folder to search from. An empty string for the initial parameters is considered a 'match everything' symbol.
 ```
 # Searches for <canvas> elements in all html files in the current directory and all subdirectories
-SearchEverything.CLI.exe .html <canvas> .
+SearchEverything.CLI.exe .html <canvas>
 # Searches for all .json files on the C:\ drive, and any subdirectories
 SearchEverything.CLI.exe .json "" C:\
 ```
-
-Aside from the first argument, the others are optional, but there is no way to provide them in an alternate order. That means that if you want to search through file contents, you'll have to provide a search path as well.
 
 ## GUI
 Start the GUI application, and provide the required arguments through the interface. Search results will be displayed in a table-like format.
