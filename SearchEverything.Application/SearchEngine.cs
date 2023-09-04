@@ -56,6 +56,7 @@ namespace SearchEverything.ApplicationCore
                     {
                         ContentSearch = arguments.ContentSearch,
                         PathSearch = arguments.PathSearch,
+                        Recursive = arguments.Recursive
                     });
 
                     result.Rows.AddRange(intermediate.Rows);
