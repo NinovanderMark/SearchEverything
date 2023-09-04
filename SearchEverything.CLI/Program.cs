@@ -43,6 +43,10 @@ namespace SearchEverything.CLI
                 Console.ForegroundColor = color;
                 return -1;
             }
+            finally
+            {
+                serviceProvider.Dispose();
+            }
         }
 
         private static ServiceProvider ConfigureServices(IConfiguration configuration)
