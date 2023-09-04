@@ -4,14 +4,21 @@ This is a simple C# application to search for directories, files and the content
 Borne out of a frustration at Window's built-in search functionality, it may be better than that, but there are tons of better applications out there. I would generally recommend you use those instead.
 
 # Getting Started
+Searching with SearchEverything a user can search for a match on the path of a file or directory, or for a match on the contents of the file. 
+
+Optionally this search can be made recursively, to include files/directories in subdirectories of the point.
+
+Below subheaders describe how to provide these arguments for the different frontends.
+
+
 SearchEverything comes with Windows binaries, which only depend on the .NET 6 [runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) being present. Alternatively, the repository can be cloned and built locally, provided the .NET SDK is installed.
 
 ## CLI
-Simply run the CLI providing a path to match, followed by the content to match and optionally the starting folder to search from. An empty string for the initial parameters is considered a 'match everything' symbol.
+Simply run the CLI providing a path to match, followed by the content to match, optionally the starting folder to search from and whether to search recursively. An empty string for the initial parameters is considered a 'match everything' symbol.
 ```
 # Searches for <canvas> elements in all html files in the current directory and all subdirectories
-SearchEverything.CLI.exe .html <canvas>
-# Searches for all .json files on the C:\ drive, and any subdirectories
+SearchEverything.CLI.exe .html <canvas> . true
+# Searches for all .json files on the C:\ drive
 SearchEverything.CLI.exe .json "" C:\
 ```
 

@@ -43,6 +43,7 @@
             label1 = new Label();
             panel3 = new Panel();
             panel4 = new Panel();
+            chk_Recursive = new CheckBox();
             btn_Search = new Button();
             panel2 = new Panel();
             data_ResultDisplay = new DataGridView();
@@ -57,6 +58,7 @@
             panel6.SuspendLayout();
             panel5.SuspendLayout();
             panel3.SuspendLayout();
+            panel4.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)data_ResultDisplay).BeginInit();
             statusStrip1.SuspendLayout();
@@ -187,11 +189,23 @@
             // 
             // panel4
             // 
+            panel4.Controls.Add(chk_Recursive);
             panel4.Dock = DockStyle.Fill;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
             panel4.Size = new Size(125, 77);
             panel4.TabIndex = 1;
+            // 
+            // chk_Recursive
+            // 
+            chk_Recursive.AutoSize = true;
+            chk_Recursive.Dock = DockStyle.Top;
+            chk_Recursive.Location = new Point(0, 0);
+            chk_Recursive.Name = "chk_Recursive";
+            chk_Recursive.Size = new Size(125, 19);
+            chk_Recursive.TabIndex = 0;
+            chk_Recursive.Text = "Search Subfolders";
+            chk_Recursive.UseVisualStyleBackColor = true;
             // 
             // btn_Search
             // 
@@ -291,6 +305,8 @@
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
             panel3.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)data_ResultDisplay).EndInit();
@@ -323,5 +339,6 @@
         private Panel panel7;
         private Label label3;
         private Label label2;
+        private CheckBox chk_Recursive;
     }
 }

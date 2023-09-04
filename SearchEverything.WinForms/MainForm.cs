@@ -30,7 +30,8 @@ namespace SearchEverything.WinForms
             var result = await Task.Run(async () => await _searchEngine.Find(new SearchArguments(txt_BasePath.Text)
             {
                 ContentSearch = txt_ContentSearch.Text,
-                PathSearch = txt_PathSearch.Text
+                PathSearch = txt_PathSearch.Text,
+                Recursive = chk_Recursive.Checked
             }));
 
             data_ResultDisplay.Rows.Clear();

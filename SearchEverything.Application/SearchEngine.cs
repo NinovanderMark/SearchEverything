@@ -24,8 +24,9 @@ namespace SearchEverything.ApplicationCore
             string? sanitizedPath = arguments.PathSearch == null ? null : arguments.PathSearch.Replace("*", "");
             return await GetResultsFromDirectory(new SearchArguments(arguments.BasePath)
             {
-                PathSearch = sanitizedPath,
-                ContentSearch = arguments.ContentSearch,
+                PathSearch = sanitizedPath?.ToLower(),
+                ContentSearch = arguments.ContentSearch?.ToLower(),
+                Recursive = arguments.Recursive,
             });
         }
 
@@ -39,7 +40,7 @@ namespace SearchEverything.ApplicationCore
                     continue;
                 
                 SearchingPath(dir);
-                if ( string.IsNullOrEmpty(arguments.PathSearch) || dir.Contains(arguments.PathSearch))
+                if ( string.IsNullOrEmpty(arguments.PathSearch) || dir.ToLower().Contains(arguments.PathSearch))
                 {
                     result.Rows.Add(new SearchResultRow
                     {
@@ -49,13 +50,16 @@ namespace SearchEverything.ApplicationCore
                     });
                 }
 
-                var intermediate = await GetResultsFromDirectory(new SearchArguments(dir)
+                if ( arguments.Recursive )
                 {
-                    ContentSearch = arguments.ContentSearch,
-                    PathSearch = arguments.PathSearch,
-                });
+                    var intermediate = await GetResultsFromDirectory(new SearchArguments(dir)
+                    {
+                        ContentSearch = arguments.ContentSearch,
+                        PathSearch = arguments.PathSearch,
+                    });
 
-                result.Rows.AddRange(intermediate.Rows);
+                    result.Rows.AddRange(intermediate.Rows);
+                }
             }
 
             var files = GetFiles(arguments.BasePath);
@@ -66,7 +70,7 @@ namespace SearchEverything.ApplicationCore
 
                 SearchingPath(file);
                 
-                if ( arguments.PathSearch == null || file.Contains(arguments.PathSearch))
+                if ( arguments.PathSearch == null || file.ToLower().Contains(arguments.PathSearch))
                 {
                     if ( !string.IsNullOrEmpty(arguments.ContentSearch))
                     {
@@ -134,7 +138,7 @@ namespace SearchEverything.ApplicationCore
                     while (!sr.EndOfStream)
                     {
                         string? line = await sr.ReadLineAsync();
-                        if (line != null && line.Contains(text))
+                        if (line != null && line.ToLower().Contains(text))
                         {
                             result.Rows.Add(new SearchResultRow
                             {

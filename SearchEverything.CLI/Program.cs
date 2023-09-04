@@ -25,6 +25,9 @@ namespace SearchEverything.CLI
             try
             {
                 var arguments = serviceProvider.GetRequiredService<ArgumentParser>().Parse(args);
+                if ( arguments == null)
+                    return 0;
+
                 return await serviceProvider.GetRequiredService<ConsoleApplication>().Run(arguments);
             }
             catch (Exception ex)
