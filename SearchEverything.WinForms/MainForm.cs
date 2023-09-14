@@ -1,5 +1,6 @@
 using SearchEverything.ApplicationCore;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace SearchEverything.WinForms
@@ -8,13 +9,16 @@ namespace SearchEverything.WinForms
     {
         private SearchEngine _searchEngine;
         private string? _lastSearchPath;
+        private SynchronizedCollection<SearchResultRow> _currentResults;
 
         public MainForm()
         {
             InitializeComponent();
             Text += " - v" + Assembly.GetExecutingAssembly().GetName().Version;
+            _currentResults = new SynchronizedCollection<SearchResultRow>();
             _searchEngine = new SearchEngine();
             _searchEngine.AddSearchPathListener((value) => _lastSearchPath = value);
+            _searchEngine.AddSearchResultListener((value) => _currentResults.Add(value));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -27,18 +31,15 @@ namespace SearchEverything.WinForms
             btn_Search.Enabled = false;
             lbl_Status.Text = "Searching...";
 
+            _currentResults.Clear();
+            data_ResultDisplay.Rows.Clear();
+
             var result = await Task.Run(async () => await _searchEngine.Find(new SearchArguments(txt_BasePath.Text)
             {
                 ContentSearch = txt_ContentSearch.Text,
                 PathSearch = txt_PathSearch.Text,
                 Recursive = chk_Recursive.Checked
             }));
-
-            data_ResultDisplay.Rows.Clear();
-            foreach (var row in result.Rows)
-            {
-                data_ResultDisplay.Rows.Add(new string[] { row.Filename, row.Path, row.LineNumber >= 0 ? row.LineNumber.ToString() : string.Empty });
-            }
 
             if (result.Errors.Any())
             {
@@ -71,6 +72,15 @@ namespace SearchEverything.WinForms
             if (!btn_Search.Enabled && _lastSearchPath != null)
             {
                 lbl_Status.Text = $"Searching {_lastSearchPath}";
+            }
+
+            if (data_ResultDisplay.Rows.Count != _currentResults.Count)
+            {
+                for (int t = data_ResultDisplay.Rows.Count; t < _currentResults.Count; t++)
+                {
+                    var row = _currentResults.ElementAt(t);
+                    data_ResultDisplay.Rows.Add(new string[] { row.Filename, row.Path, row.LineNumber >= 0 ? row.LineNumber.ToString() : string.Empty });
+                }
             }
         }
     }

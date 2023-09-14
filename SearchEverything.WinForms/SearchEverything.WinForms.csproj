@@ -7,11 +7,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>SearchEverything.ico</ApplicationIcon>
-	<Version>0.5.0</Version>
+	<Version>0.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="SearchEverything.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

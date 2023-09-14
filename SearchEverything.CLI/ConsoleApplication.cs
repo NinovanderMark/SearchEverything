@@ -20,12 +20,10 @@ namespace SearchEverything.CLI
 
         public async Task<int> Run(SearchArguments arguments)
         {
+            _searchEngine.AddSearchResultListener(ResultFound);
+
             _logger.LogInformation($"Searching for files matching '{arguments.PathSearch}' with contents matching '{arguments.ContentSearch}' in path '{arguments.BasePath}'");
             var result = await _searchEngine.Find(arguments);
-            foreach (var row in result.Rows)
-            {
-               Console.WriteLine($"  {row.Path}{(row.LineNumber >= 0 ? $":{row.LineNumber}" : string.Empty )}");
-            }
 
             Console.WriteLine($"Completed with {result.Errors.Count} errors");
 
@@ -39,6 +37,11 @@ namespace SearchEverything.CLI
                 
 
             return 0;
+        }
+
+        private void ResultFound(SearchResultRow row)
+        {
+            Console.WriteLine($"  {row.Path}{(row.LineNumber >= 0 ? $":{row.LineNumber}" : string.Empty)}");
         }
     }
 }

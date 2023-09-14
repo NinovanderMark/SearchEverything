@@ -4,7 +4,8 @@ namespace SearchEverything.ApplicationCore
 {
     public class SearchEngine
     {
-        private List<Action<string>> _searchPathListeners { get; set; } = new List<Action<string>>();
+        private List<Action<string>> _searchPathListeners { get; } = new List<Action<string>>();
+        private List<Action<SearchResultRow>> _searchResultListeners { get; } = new List<Action<SearchResultRow>>();
 
         /// <summary>
         /// Add a function that is called each time a new path is searched
@@ -13,6 +14,15 @@ namespace SearchEverything.ApplicationCore
         public void AddSearchPathListener(Action<string> listener)
         {
             _searchPathListeners.Add(listener);
+        }
+
+        /// <summary>
+        /// Add a function that is called each time a new result is found
+        /// </summary>
+        /// <param name="listener"></param>
+        public void AddSearchResultListener(Action<SearchResultRow> listener)
+        {
+            _searchResultListeners.Add(listener);
         }
 
         /// <summary>
@@ -42,12 +52,15 @@ namespace SearchEverything.ApplicationCore
                 SearchingPath(dir);
                 if ( string.IsNullOrEmpty(arguments.PathSearch) || dir.ToLower().Contains(arguments.PathSearch))
                 {
-                    result.Rows.Add(new SearchResultRow
+                    var newResult = new SearchResultRow
                     {
                         Filename = "",
                         LineNumber = -1,
                         Path = dir
-                    });
+                    };
+
+                    FoundResult(newResult);
+                    result.Rows.Add(newResult);
                 }
 
                 if ( arguments.Recursive )
@@ -80,12 +93,14 @@ namespace SearchEverything.ApplicationCore
                     }
                     else
                     {
-                        result.Rows.Add(new SearchResultRow
+                        var newResult = new SearchResultRow
                         {
                             Filename = Path.GetFileName(file),
                             LineNumber = -1,
                             Path = file
-                        });
+                        };
+                        FoundResult(newResult);
+                        result.Rows.Add(newResult);
                     }
                 }
             }
@@ -98,6 +113,14 @@ namespace SearchEverything.ApplicationCore
             foreach(var listener in _searchPathListeners)
             {
                 listener.Invoke(path);
+            }
+        }
+
+        private void FoundResult(SearchResultRow result)
+        {
+            foreach(var listener in _searchResultListeners)
+            {
+                listener.Invoke(result);
             }
         }
 
@@ -141,12 +164,14 @@ namespace SearchEverything.ApplicationCore
                         string? line = await sr.ReadLineAsync();
                         if (line != null && line.ToLower().Contains(text))
                         {
-                            result.Rows.Add(new SearchResultRow
+                            var newResult = new SearchResultRow
                             {
                                 Filename = fileName,
                                 LineNumber = lineNumber,
                                 Path = file
-                            });
+                            };
+                            FoundResult(newResult);
+                            result.Rows.Add(newResult);
                         }
 
                         lineNumber++;
