@@ -42,38 +42,14 @@ namespace SearchEverything.ApplicationCore
 
         private async Task<SearchResult> GetResultsFromDirectory(SearchArguments arguments)
         {
-            var result = new SearchResult();
             var directories = GetDirectories(arguments.BasePath);
+            var taskResults = new List<Task<List<SearchResultRow>>>();
             foreach(var dir in directories)
             {
                 if (string.IsNullOrEmpty(dir))
                     continue;
-                
-                SearchingPath(dir);
-                if ( string.IsNullOrEmpty(arguments.PathSearch) || dir.ToLower().Contains(arguments.PathSearch))
-                {
-                    var newResult = new SearchResultRow
-                    {
-                        Filename = "",
-                        LineNumber = -1,
-                        Path = dir
-                    };
 
-                    FoundResult(newResult);
-                    result.Rows.Add(newResult);
-                }
-
-                if ( arguments.Recursive )
-                {
-                    var intermediate = await GetResultsFromDirectory(new SearchArguments(dir)
-                    {
-                        ContentSearch = arguments.ContentSearch,
-                        PathSearch = arguments.PathSearch,
-                        Recursive = arguments.Recursive
-                    });
-
-                    result.Rows.AddRange(intermediate.Rows);
-                }
+                taskResults.Add(SearchDirectory(new SearchArguments(dir, arguments)));
             }
 
             var files = GetFiles(arguments.BasePath);
@@ -82,27 +58,13 @@ namespace SearchEverything.ApplicationCore
                 if (string.IsNullOrEmpty(file))
                     continue;
 
-                SearchingPath(file);
-                
-                if ( arguments.PathSearch == null || file.ToLower().Contains(arguments.PathSearch))
-                {
-                    if ( !string.IsNullOrEmpty(arguments.ContentSearch))
-                    {
-                        var intermediate = await GetResultsFromFile(arguments.ContentSearch, file);
-                        result.Rows.AddRange(intermediate.Rows);
-                    }
-                    else
-                    {
-                        var newResult = new SearchResultRow
-                        {
-                            Filename = Path.GetFileName(file),
-                            LineNumber = -1,
-                            Path = file
-                        };
-                        FoundResult(newResult);
-                        result.Rows.Add(newResult);
-                    }
-                }
+                taskResults.Add(SearchFile(new SearchArguments(file, arguments)));
+            }
+
+            var result = new SearchResult();
+            foreach(var res in taskResults)
+            {
+                result.Rows.AddRange(await res);
             }
 
             return result;
@@ -148,6 +110,60 @@ namespace SearchEverything.ApplicationCore
                 // We don't care about unauthorized exceptions
                 return new string[0];
             }
+        }
+
+        private async Task<List<SearchResultRow>> SearchDirectory(SearchArguments arguments)
+        {
+            SearchingPath(arguments.BasePath);
+            var results = new List<SearchResultRow>();
+            if (string.IsNullOrEmpty(arguments.PathSearch) || arguments.BasePath.ToLower().Contains(arguments.PathSearch))
+            {
+                var newResult = new SearchResultRow
+                {
+                    Filename = "",
+                    LineNumber = -1,
+                    Path = arguments.BasePath
+                };
+
+                FoundResult(newResult);
+                results.Add(newResult);
+            }
+
+            if (arguments.Recursive)
+            {
+                var intermediate = await GetResultsFromDirectory(new SearchArguments(arguments.BasePath, arguments));
+                results.AddRange(intermediate.Rows);
+            }
+
+            return results;
+        }
+
+        private async Task<List<SearchResultRow>> SearchFile(SearchArguments arguments)
+        {
+            SearchingPath(arguments.BasePath);
+
+            var results = new List<SearchResultRow>();
+            if (arguments.PathSearch == null || arguments.BasePath.ToLower().Contains(arguments.PathSearch))
+            {
+                if (!string.IsNullOrEmpty(arguments.ContentSearch))
+                {
+                    var intermediate = await GetResultsFromFile(arguments.ContentSearch, arguments.BasePath);
+                    results.AddRange(intermediate.Rows);
+                }
+                else
+                {
+                    var newResult = new SearchResultRow
+                    {
+                        Filename = Path.GetFileName(arguments.BasePath),
+                        LineNumber = -1,
+                        Path = arguments.BasePath
+                    };
+                    FoundResult(newResult);
+                    results.Add(newResult);
+                }
+            }
+
+            return results;
         }
 
         private async Task<SearchResult> GetResultsFromFile(string text, string file)

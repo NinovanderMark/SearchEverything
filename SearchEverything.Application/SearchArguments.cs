@@ -7,9 +7,16 @@
         public string BasePath { get; set; }
         public bool Recursive { get; set; }
 
-        public SearchArguments(string basePath)
+        public SearchArguments(string basePath, SearchArguments? arguments = null)
         {
             BasePath = basePath;
+
+            if ( arguments != null )
+            {
+                ContentSearch = arguments.ContentSearch;
+                PathSearch = arguments.PathSearch;
+                Recursive = arguments.Recursive;
+            }
         }
     }
 }
