@@ -25,7 +25,7 @@ SearchEverything.CLI.exe .json "" C:\
 ## GUI
 Start the GUI application, and provide the required arguments through the interface. Search results will be displayed in a table-like format.
 
-![afbeelding](https://github.com/NinovanderMark/SearchEverything/assets/6692167/a06293d4-ca6c-48f2-b2ce-c4b0d703e7ad)
+![afbeelding](https://github.com/NinovanderMark/SearchEverything/assets/6692167/ae1f6e03-4d00-4cf4-9799-c2d7b10251ee)
 
 # Alternate platforms
 The GUI application is a Windows Forms application, which can only target Windows. The CLI should be able to run on any platform where .NET 6 will run. To compile it for one of these platforms, run `dotnet build` with the `--os` parameter, indicating the target OS to build for.
